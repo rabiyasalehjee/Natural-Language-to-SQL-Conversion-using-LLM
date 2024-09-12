@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Query Database Using Natural Language</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr.hidden-row {
+            display: none;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            color: #4CAF50;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .faq {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+
+        .faq h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Query Database Using Natural Language</h1>
+    <form action="/query" method="POST">
+        <label for="query">Enter your query in natural language:</label><br><br>
+        <input type="text" id="query" name="query" required><br><br>
+        <input type="submit" value="Submit">
+    </form>
+    <div id="results"></div>
+    <div id="faq"></div>
+    <script>
+        document.querySelector('form').onsubmit = async (e) => {
+            e.preventDefault();
+            const query = document.getElementById('query').value;
+            const response = await fetch('/query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `query=${encodeURIComponent(query)}`,
+            });
+            const data = await response.json();
+            displayResults(data.query_results);
+            displayFAQ(data.faq_results);
+        };
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = ''; // Clear previous results
+
+            if (!data || data.length === 0) {
+                const noResults = document.createElement('p');
+                noResults.innerText = 'No results found. Please try a different query.';
+                resultsDiv.appendChild(noResults);
+                return;
+            }
+
+            const table = document.createElement('table');
+            const columns = Object.keys(data[0]);
+
+            // Create table headers
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            columns.forEach(column => {
+                const th = document.createElement('th');
+                th.innerText = column;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // Create table body
+            const tbody = document.createElement('tbody');
+            data.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                if (index >= 5) tr.classList.add('hidden-row');
+                columns.forEach(column => {
+                    const td = document.createElement('td');
+                    td.innerText = row[column];
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+            resultsDiv.appendChild(table);
+
+            // Add "Press to see more" link
+            const seeMoreLink = document.createElement('a');
+            seeMoreLink.href = '#';
+            seeMoreLink.innerText = 'Press to see more';
+            seeMoreLink.onclick = (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.hidden-row').forEach(row => row.classList.remove('hidden-row'));
+                seeMoreLink.style.display = 'none';
+                collapseLink.style.display = 'inline-block';
+            };
+            resultsDiv.appendChild(seeMoreLink);
+
+            // Add "Collapse table" link
+            const collapseLink = document.createElement('a');
+            collapseLink.href = '#';
+            collapseLink.innerText = 'Collapse table';
+            collapseLink.style.display = 'none';
+            collapseLink.onclick = (e) => {
+                e.preventDefault();
+                document.querySelectorAll('tbody tr').forEach((row, index) => {
+                    if (index >= 5) row.classList.add('hidden-row');
+                });
+                collapseLink.style.display = 'none';
+                seeMoreLink.style.display = 'inline-block';
+            };
+            resultsDiv.appendChild(collapseLink);
+        }
+
+        function displayFAQ(data) {
+            const faqDiv = document.getElementById('faq');
+            faqDiv.innerHTML = ''; // Clear previous FAQ results
+
+            const faqSection = document.createElement('div');
+            faqSection.classList.add('faq');
+            const faqHeading = document.createElement('h3');
+            faqHeading.innerText = 'Relevant Questions';
+            faqSection.appendChild(faqHeading);
+
+            if (data.length === 0) {
+                const noFaq = document.createElement('p');
+                noFaq.innerText = 'No relevant queries found.';
+                faqSection.appendChild(noFaq);
+            } else {
+                data.forEach(faq => {
+                    const faqItem = document.createElement('p');
+                    faqItem.innerText = faq;
+                    faqSection.appendChild(faqItem);
+                });
+            }
+            faqDiv.appendChild(faqSection);
+        }
+    </script>
+</body>
+</html>
