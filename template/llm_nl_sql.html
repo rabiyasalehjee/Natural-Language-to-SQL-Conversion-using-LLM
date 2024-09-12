@@ -4,19 +4,9 @@
     <meta charset="UTF-8">
     <title>Query Database Using Natural Language</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-
-        h1 {
-            color: #333;
-        }
-
         form {
             margin-bottom: 20px;
         }
-
         input[type="text"] {
             width: 300px;
             padding: 10px;
@@ -24,7 +14,6 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
-
         input[type="submit"] {
             padding: 10px 15px;
             background-color: #4CAF50;
@@ -33,7 +22,6 @@
             border-radius: 4px;
             cursor: pointer;
         }
-
         input[type="submit"]:hover {
             background-color: #45a049;
         }
@@ -58,10 +46,6 @@
             background-color: #f9f9f9;
         }
 
-        tr.hidden-row {
-            display: none;
-        }
-
         a {
             display: inline-block;
             margin-top: 20px;
@@ -70,20 +54,12 @@
             cursor: pointer;
         }
 
-        a:hover {
-            text-decoration: underline;
-        }
-
         .faq {
             margin-top: 20px;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
             background-color: #f9f9f9;
-        }
-
-        .faq h3 {
-            margin-top: 0;
         }
     </style>
 </head>
@@ -114,8 +90,6 @@
 
         function displayResults(data) {
             const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = ''; // Clear previous results
-
             if (!data || data.length === 0) {
                 const noResults = document.createElement('p');
                 noResults.innerText = 'No results found. Please try a different query.';
