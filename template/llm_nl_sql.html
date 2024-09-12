@@ -152,34 +152,6 @@
             table.appendChild(tbody);
             resultsDiv.appendChild(table);
 
-            // Add "Press to see more" link
-            const seeMoreLink = document.createElement('a');
-            seeMoreLink.href = '#';
-            seeMoreLink.innerText = 'Press to see more';
-            seeMoreLink.onclick = (e) => {
-                e.preventDefault();
-                document.querySelectorAll('.hidden-row').forEach(row => row.classList.remove('hidden-row'));
-                seeMoreLink.style.display = 'none';
-                collapseLink.style.display = 'inline-block';
-            };
-            resultsDiv.appendChild(seeMoreLink);
-
-            // Add "Collapse table" link
-            const collapseLink = document.createElement('a');
-            collapseLink.href = '#';
-            collapseLink.innerText = 'Collapse table';
-            collapseLink.style.display = 'none';
-            collapseLink.onclick = (e) => {
-                e.preventDefault();
-                document.querySelectorAll('tbody tr').forEach((row, index) => {
-                    if (index >= 5) row.classList.add('hidden-row');
-                });
-                collapseLink.style.display = 'none';
-                seeMoreLink.style.display = 'inline-block';
-            };
-            resultsDiv.appendChild(collapseLink);
-        }
-
         function displayFAQ(data) {
             const faqDiv = document.getElementById('faq');
             faqDiv.innerHTML = ''; // Clear previous FAQ results
